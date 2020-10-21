@@ -69,10 +69,10 @@ def clean_data(dirtinfo):
 
 def create_cleanData():
     # Basado en [3] Leyendo test_data
-    with open("data/test_data.csv") as file:
+    with open("data/test_data_m2.csv") as file:
         
         reader =  csv.reader(file)
-        data_sp = leer_datos(reader,60)
+        data_sp = leer_datos(reader,51)
 
     data_dr = group_data_rep(data_sp)
     data_final = clean_data(data_dr)
@@ -82,7 +82,7 @@ def create_cleanData():
 
     #Basado en [4] Creando el csv limpio para R
 
-    with open("data/clean_data.csv","w",newline='') as f:
+    with open("data/clean_data_m2.csv","w",newline='') as f:
         
         escritor = csv.writer(f,delimiter=",")
         escritor.writerow(titles)
@@ -92,7 +92,7 @@ def create_cleanData():
 
 def create_data_sp():
     
-    with open("data/test_data.csv") as file:
+    with open("data/test_data_m2.csv") as file:
         
         reader =  csv.reader(file)
         data_sp = []
@@ -103,14 +103,14 @@ def create_data_sp():
             data_sp.append(float(row[1]))
             print("Dato["+str(linea)+"]:"+str(row[1]))
 
-            if linea>60:
+            if linea>51:
                 break
 
             linea +=1
     titles = ["t","Impulso"]
     data_sp_csv = ord_imp_data(data_sp,titles)
     
-    with open("data/dirt_data.csv","w",newline='') as f:
+    with open("data/dirt_data_m2.csv","w",newline='') as f:
         
         escritor = csv.writer(f,delimiter=",")
         escritor.writerow(titles)
@@ -119,7 +119,7 @@ def create_data_sp():
             escritor.writerow(data_sp_csv[i])
 
 def main():
-    #create_cleanData()
+    create_cleanData()
     create_data_sp()
 
 if __name__ == "__main__":

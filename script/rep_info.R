@@ -8,8 +8,8 @@ library(ggplot2)   # Gráficos
 library(mgcv)      #---> Usar GAM
 
 #_______________________________________________
-#                 DATOS PROCESADOS_M1            |
-#_______________________________________________
+#                 DATOS PROCESADOS_M1           |
+#_______________________________________________|
 
 #data_csv = "data/clean_data.csv"
 #data_util = read.table(data_csv,header = TRUE,sep=",")
@@ -19,14 +19,33 @@ library(mgcv)      #---> Usar GAM
 #                 DATOS SIN PROCESAR_M1         |
 #_______________________________________________
 
-data_csv = "data/dirt_data.csv"
+#data_csv = "data/dirt_data.csv"
+#data_util = read.table(data_csv,header = TRUE,sep=",")
+#data_y = c(data_util$Impulso)
+#data_x = c(data_util$t)
+
+#_______________________________________________
+#                 DATOS PROCESADOS_M2           |
+#_______________________________________________|
+
+#data_csv = "data/clean_data_m2.csv"
+#data_util = read.table(data_csv,header = TRUE,sep=",")
+#data_y = c(data_util$Impulso)
+#data_x = c(data_util$t)
+#_______________________________________________
+#                 DATOS SIN PROCESADOS_M2       |
+#_______________________________________________|
+
+data_csv = "data/dirt_data_m2.csv"
 data_util = read.table(data_csv,header = TRUE,sep=",")
 data_y = c(data_util$Impulso)
 data_x = c(data_util$t)
 
+g_p = 8 # Grado de polinomio - regresión
+
 gam_curve = gam(data_y ~ s(data_x))                         # Regresión GAM
 loes_curve = loess(data_y ~ data_x)                         # Regresión LOESS
-sm_curve = lm(data_y ~ poly(data_x,degree = 6,raw = TRUE))  # Regresión polinomial
+sm_curve = lm(data_y ~ poly(data_x,degree = g_p,raw = TRUE))  # Regresión polinomial
 
 print(summary(sm_curve)) # Stats de la regresión polinomial
 
@@ -36,8 +55,6 @@ print(summary(sm_curve)) # Stats de la regresión polinomial
 
 plot_gg = function(data,x,y,lb_x,lb_y,title){ # Gráficos usando ggplot2
       
-      g_p = 6 # Grado de polinomio - regresión
-
       ggplot(data,aes(x=x,y=y))+
       ggtitle(title)+
       theme_bw()+
