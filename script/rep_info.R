@@ -6,6 +6,7 @@
 library(extrafont) # Cargando fonts --> Revisar disponibles con windosFonts()
 library(ggplot2)   # Gráficos 
 library(mgcv)      #---> Usar GAM
+library(lme4)     # Usar BIC para estimar la regresión
 
 #_______________________________________________
 #                 DATOS PROCESADOS_M1           |
@@ -41,11 +42,15 @@ data_util = read.table(data_csv,header = TRUE,sep=",")
 data_y = c(data_util$Impulso)
 data_x = c(data_util$t)
 
-g_p = 8 # Grado de polinomio - regresión
+g_p = 2 # Grado de polinomio - regresión
 
 gam_curve = gam(data_y ~ s(data_x))                         # Regresión GAM
 loes_curve = loess(data_y ~ data_x)                         # Regresión LOESS
 sm_curve = lm(data_y ~ poly(data_x,degree = g_p,raw = TRUE))  # Regresión polinomial
+
+est_mr = BIC(sm_curve)  # Índice BIC, tomar la regresión que dé menor BIC [4]
+bic = paste("BIC:",est_mr)
+print(bic)
 
 print(summary(sm_curve)) # Stats de la regresión polinomial
 
@@ -61,30 +66,30 @@ plot_gg = function(data,x,y,lb_x,lb_y,title){ # Gráficos usando ggplot2
       geom_point()+
       geom_line(aes(colour="Registros"))+
       geom_hline(yintercept=0)+
-      geom_smooth( # Regresión GAM
-            method = "gam",
-            se = FALSE,
-            linetype = "dashed",
-            aes(colour="Regresión GAM")
-      )+
-      geom_smooth( # Regresión LOESS
-            method = "loess",
-            se = FALSE,
-            linetype = "twodash",
-            aes(colour="Regresión LOESS")
-      )+
-      geom_smooth( # Regresión polinomial
-            method = "lm",
-            formula = y ~ poly(x,degree = g_p,raw = TRUE),
-            se = FALSE,
-            aes(colour="Regresión polinómica")
-      )+ 
-      stat_smooth( # Área bajo la curva basado en [1]
-            geom = 'area',
-            method = 'lm',
-            formula = y ~ poly(x,degree = g_p,raw = TRUE),
-            alpha = .4, aes(fill = "Impulso Total")
-      ) +
+      #geom_smooth( # Regresión GAM
+      #      method = "gam",
+      #      se = FALSE,
+      #      linetype = "dashed",
+      #      aes(colour="Regresión GAM")
+      #)+
+      #geom_smooth( # Regresión LOESS
+      #      method = "loess",
+      #      se = FALSE,
+      #      linetype = "twodash",
+      #      aes(colour="Regresión LOESS")
+      #)+
+      #geom_smooth( # Regresión polinomial
+      #      method = "lm",
+      #      formula = y ~ poly(x,degree = g_p,raw = TRUE),
+      #      se = FALSE,
+      #      aes(colour="Regresión polinómica")
+      #)+ 
+      #stat_smooth( # Área bajo la curva basado en [1]
+      #      geom = 'area',
+      #      method = 'lm',
+      #      formula = y ~ poly(x,degree = g_p,raw = TRUE),
+      #      alpha = .4, aes(fill = "Impulso Total")
+      #) +
       scale_fill_manual(
             name="Conv. área sombreada",
             values="pink"
@@ -97,7 +102,7 @@ plot_gg = function(data,x,y,lb_x,lb_y,title){ # Gráficos usando ggplot2
       xlab(lb_x)+ylab(lb_y)+ # leyendas en el plot tomado de [2]
       scale_colour_manual(
             name="Convenciones lineas",
-            values=c("grey", "black","red","blue")
+            values=c("black","blue","grey","red")
       )
 }
 
@@ -149,3 +154,4 @@ print(graf_gg)
 # [2] https://stackoverflow.com/questions/36276240/how-to-add-legend-to-geom-smooth-in-ggplot-in-r
 # Diferencia entre poly(raw = TRUE) y I(x):
 # [3] https://stackoverflow.com/questions/19484053/what-does-the-r-function-poly-really-do
+# [4] https://youtu.be/QptI-vDle8Y 
